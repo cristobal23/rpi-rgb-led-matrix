@@ -14,21 +14,41 @@
 
 import Image
 import ImageDraw
+import requests
+import hashlib
 import time
+from io import BytesIO
 from rgbmatrix import Adafruit_RGBmatrix
+
+email = "cristobal23@gmail.com"
+size = 32
+gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest()
+r = requests.get(gravatar_url)
+
+img = Image.open(BytesIO(r.content))
+img.load()
+
+ima = img.resize((size,size), Image.ANTIALIAS)
+
+line = Image.new("1", (1, 32))
+draw  = ImageDraw.Draw(line)
+draw.line((0, 0, 0, 31), fill=0)
+
+image = Image.new("RGB", (33, 32))
+image.paste(ima, (0,0))
+#image.paste(line, (32,0))
 
 # Rows and chain length are both required parameters:
 matrix = Adafruit_RGBmatrix(32, 2)
 
+matrix.Fill(0x6F85FF)
 # 24-bit RGB scrolling example.
 # The adafruit.png image has a couple columns of black pixels at
 # the right edge, so erasing after the scrolled image isn't necessary.
 while True:
         matrix.Clear()
-        image = Image.open("marco_pi.png")
-        image.load()
         for n in range(32, -image.size[0], -1):
-	        matrix.SetImage(image.im.id, n, 1)
+	        matrix.SetImage(image.im.id, n, 0)
 	        time.sleep(0.025)
 
 matrix.Clear()
