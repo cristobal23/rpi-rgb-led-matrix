@@ -18,7 +18,7 @@ import time
 from rgbmatrix import Adafruit_RGBmatrix
 
 # Rows and chain length are both required parameters:
-matrix = Adafruit_RGBmatrix(32, 1)
+matrix = Adafruit_RGBmatrix(32, 2)
 
 # Bitmap example w/graphics prims
 image = Image.new("1", (32, 32)) # Can be larger than matrix if wanted!!
