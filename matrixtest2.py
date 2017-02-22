@@ -25,29 +25,29 @@ size = 32
 gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest()
 r = requests.get(gravatar_url)
 
-img = Image.open(BytesIO(r.content))
-img.load()
+# Creates the avatar image
+avatar = Image.open(BytesIO(r.content))
+avatar.load()
+small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
-ima = img.resize((size,size), Image.ANTIALIAS)
+# Creates the text field
+text = Image.new("RGB", (128, 32))
+context = ImageDraw.Draw(text)
+context.text((0,0), "Whistle HackWeek 2017", fill=(0,200,0))
 
-line = Image.new("1", (1, 32))
-draw  = ImageDraw.Draw(line)
-draw.line((0, 0, 0, 31), fill=0)
-
-image = Image.new("RGB", (33, 32))
-image.paste(ima, (0,0))
-#image.paste(line, (32,0))
+# Combines the avatar image with the text field
+image = Image.new("RGB", (168, 32))
+image.paste(small_avatar, (0,0))
+image.paste(text, (40,10))
 
 # Rows and chain length are both required parameters:
 matrix = Adafruit_RGBmatrix(32, 2)
 
 matrix.Fill(0x6F85FF)
 # 24-bit RGB scrolling example.
-# The adafruit.png image has a couple columns of black pixels at
-# the right edge, so erasing after the scrolled image isn't necessary.
 while True:
         matrix.Clear()
-        for n in range(32, -image.size[0], -1):
+        for n in range(64, -image.size[0], -1):
 	        matrix.SetImage(image.im.id, n, 0)
 	        time.sleep(0.025)
 
