@@ -31,14 +31,16 @@ avatar.load()
 small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
 # Creates the text field
-text = Image.new("RGB", (128, 32))
+text = Image.new("RGB", (60, 32))
 context = ImageDraw.Draw(text)
-context.text((0,0), "Whistle HackWeek 2017", fill=(0,200,0))
+context.text((0,0), "Whistle", fill=(0,200,0))
+context.text((0,10), "Hackweek", fill=(0,200,0))
+context.text((0,20), "2017 !!!", fill=(0,200,0))
 
 # Combines the avatar image with the text field
-image = Image.new("RGB", (168, 32))
+image = Image.new("RGB", (90, 32))
 image.paste(small_avatar, (0,0))
-image.paste(text, (40,10))
+image.paste(text, (40,0))
 
 # Rows and chain length are both required parameters:
 matrix = Adafruit_RGBmatrix(32, 2)
