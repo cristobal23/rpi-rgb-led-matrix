@@ -36,7 +36,7 @@ text = Image.new("RGB", (60, 32))
 context = ImageDraw.Draw(text)
 context.text((0,0), "Whistle", fill=(0,200,0))
 context.text((0,10), "Hackweek", fill=(0,0,200))
-context.text((0,20), "2017 !!!", fill=(0,200,0))
+context.text((0,20), "2017 !!!", fill=(0,200,200))
 
 # Combines the avatar image with the text field
 image = Image.new("RGB", (90, 32))
