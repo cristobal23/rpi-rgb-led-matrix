@@ -37,34 +37,37 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
-d = feedparser.parse('https://' + os.environ.get('JIRA_USERNAME') + ':' + os.environ.get('JIRA_PASSWORD') + '@whistle.atlassian.net/activity')
+def create_image():
+    d = feedparser.parse('https://' + os.environ.get('JIRA_USERNAME') + ':' + os.environ.get('JIRA_PASSWORD') + '@whistle.atlassian.net/activity')
 
-# Requests the avatar image
-avatar_url = d.entries[0].links[1].href
-size = 32
-r = requests.get(avatar_url)
+    # Requests the avatar image
+    avatar_url = d.entries[0].links[1].href
+    size = 32
+    r = requests.get(avatar_url)
 
-# Creates the avatar image
-avatar = Image.open(BytesIO(r.content))
-avatar.load()
-small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
+    # Creates the avatar image
+    avatar = Image.open(BytesIO(r.content))
+    avatar.load()
+    small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
-# Parse the entry
-top_row = d.entries[0].authors[0].name
-middle_row = strip_tags(d.entries[0].title).split()[2] + ' ' + strip_tags(d.entries[0].title).split()[3]
-last_row = " ".join(strip_tags(d.entries[0].title).split()[4:])
+    # Parse the entry
+    top_row = d.entries[0].authors[0].name
+    middle_row = strip_tags(d.entries[0].title).split()[2] + ' ' + strip_tags(d.entries[0].title).split()[3]
+    last_row = " ".join(strip_tags(d.entries[0].title).split()[4:])
 
-# Creates the text field
-text = Image.new("RGB", (128, 32))
-context = ImageDraw.Draw(text)
-context.text((0,0), top_row, fill=(0,200,0))
-context.text((0,10), middle_row, fill=(0,0,200))
-context.text((0,20), last_row, fill=(0,200,200))
+    # Creates the text field
+    text = Image.new("RGB", (128, 32))
+    context = ImageDraw.Draw(text)
+    context.text((0,0), top_row, fill=(0,200,0))
+    context.text((0,10), middle_row, fill=(0,0,200))
+    context.text((0,20), last_row, fill=(0,200,200))
 
-# Combines the avatar image with the text field
-image = Image.new("RGB", (160, 32))
-image.paste(small_avatar, (0,0))
-image.paste(text, (40,0))
+    # Combines the avatar image with the text field
+    image = Image.new("RGB", (160, 32))
+    image.paste(small_avatar, (0,0))
+    image.paste(text, (40,0))
+
+    return image
 
 # Rows and chain length are both required parameters:
 matrix = Adafruit_RGBmatrix(32, 2)
@@ -72,9 +75,10 @@ matrix = Adafruit_RGBmatrix(32, 2)
 matrix.Fill(0x6F85FF)
 # 24-bit RGB scrolling example.
 while True:
-        matrix.Clear()
-        for n in range(64, -image.size[0], -1):
-	        matrix.SetImage(image.im.id, n, 0)
-	        time.sleep(0.025)
+    matrix.Clear()
+    image = create_image()
+    for n in range(64, -image.size[0], -1):
+        matrix.SetImage(image.im.id, n, 0)
+        time.sleep(0.025)
 
 matrix.Clear()
