@@ -19,24 +19,47 @@ import hashlib
 import time
 from io import BytesIO
 from rgbmatrix import Adafruit_RGBmatrix
+from HTMLParser import HTMLParser
+import feedparser
+import os
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+
+d = feedparser.parse('https://' + os.environ.get('JIRA_USERNAME') + ':' + os.environ.get('JIRA_PASSWORD') + '@whistle.atlassian.net/activity')
 
 # Requests the avatar image
-email = "cristobal23@gmail.com"
+avatar_url = d.entries[0].links[1].href
 size = 32
-gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest()
-r = requests.get(gravatar_url)
+r = requests.get(avatar_url)
 
 # Creates the avatar image
 avatar = Image.open(BytesIO(r.content))
 avatar.load()
 small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
+# Parse the entry
+top_row = d.entries[0].authors[0].name
+middle_row = strip_tags(d.entries[0].title).split()[2] + ' ' + strip_tags(d.entries[0].title).split()[3]
+last_row = " ".join(strip_tags(d.entries[0].title).split()[4:])
+
 # Creates the text field
 text = Image.new("RGB", (60, 32))
 context = ImageDraw.Draw(text)
-context.text((0,0), "Whistle", fill=(0,200,0))
-context.text((0,10), "Hackweek", fill=(0,0,200))
-context.text((0,20), "2017 !!!", fill=(0,200,200))
+context.text((0,0), top_row, fill=(0,200,0))
+context.text((0,10), middle_row, fill=(0,0,200))
+context.text((0,20), last_row, fill=(0,200,200))
 
 # Combines the avatar image with the text field
 image = Image.new("RGB", (90, 32))
