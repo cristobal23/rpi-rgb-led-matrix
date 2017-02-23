@@ -20,6 +20,7 @@ import time
 from io import BytesIO
 from rgbmatrix import Adafruit_RGBmatrix
 
+# Requests the avatar image
 email = "cristobal23@gmail.com"
 size = 32
 gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest()
