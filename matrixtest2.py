@@ -38,12 +38,14 @@ def strip_tags(html):
     return s.get_data()
 
 def create_image():
-    d = feedparser.parse('https://' + os.environ.get('JIRA_USERNAME') + ':' + os.environ.get('JIRA_PASSWORD') + '@whistle.atlassian.net/activity')
+    username = os.environ.get('JIRA_USERNAME')
+    password = os.environ.get('JIRA_PASSWORD')
+    d = feedparser.parse('https://' + username + ':' + password + '@whistle.atlassian.net/activity')
 
     # Requests the avatar image
     avatar_url = d.entries[0].links[1].href
     size = 32
-    r = requests.get(avatar_url)
+    r = requests.get(avatar_url, auth=(username, password))
 
     # Creates the avatar image
     avatar = Image.open(BytesIO(r.content))
