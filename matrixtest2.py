@@ -55,14 +55,14 @@ middle_row = strip_tags(d.entries[0].title).split()[2] + ' ' + strip_tags(d.entr
 last_row = " ".join(strip_tags(d.entries[0].title).split()[4:])
 
 # Creates the text field
-text = Image.new("RGB", (60, 32))
+text = Image.new("RGB", (128, 32))
 context = ImageDraw.Draw(text)
 context.text((0,0), top_row, fill=(0,200,0))
 context.text((0,10), middle_row, fill=(0,0,200))
 context.text((0,20), last_row, fill=(0,200,200))
 
 # Combines the avatar image with the text field
-image = Image.new("RGB", (90, 32))
+image = Image.new("RGB", (160, 32))
 image.paste(small_avatar, (0,0))
 image.paste(text, (40,0))
 
