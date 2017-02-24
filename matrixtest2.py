@@ -48,7 +48,11 @@ def create_image():
     r = requests.get(avatar_url, auth=(username, password))
 
     # Creates the avatar image
-    avatar = Image.open(BytesIO(r.content))
+    avatar_string = u'avatarId'
+    if avatar_string in avatar_url:
+        avatar = Image.open("jira.png")
+    else:
+        avatar = Image.open(BytesIO(r.content))
     avatar.load()
     small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
