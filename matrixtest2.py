@@ -22,6 +22,11 @@ from rgbmatrix import Adafruit_RGBmatrix
 from HTMLParser import HTMLParser
 import feedparser
 import os
+import sys
+
+
+if 'JIRA_USERNAME' not in os.environ:
+    sys.exit(2)
 
 class MLStripper(HTMLParser):
     def __init__(self):
