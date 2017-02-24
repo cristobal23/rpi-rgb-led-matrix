@@ -41,34 +41,33 @@ def create_image():
     username = os.environ.get('JIRA_USERNAME')
     password = os.environ.get('JIRA_PASSWORD')
     d = feedparser.parse('https://' + username + ':' + password + '@whistle.atlassian.net/activity')
-
-    # Requests the avatar image
     avatar_url = d.entries[0].links[1].href
     size = 32
-    r = requests.get(avatar_url, auth=(username, password))
 
-    # Creates the avatar image
+    # Create the avatar image
     avatar_string = u'avatarId'
     if avatar_string in avatar_url:
-        avatar = Image.open("jira.png")
+        small_avatar = Image.open("jira.png")
+        small_avatar.load()
     else:
+        r = requests.get(avatar_url, auth=(username, password))
         avatar = Image.open(BytesIO(r.content))
-    avatar.load()
-    small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
+        avatar.load()
+        small_avatar = avatar.resize((size,size), Image.ANTIALIAS)
 
     # Parse the entry
     top_row = d.entries[0].authors[0].name
     middle_row = strip_tags(d.entries[0].title).split()[2] + ' ' + strip_tags(d.entries[0].title).split()[3]
     last_row = " ".join(strip_tags(d.entries[0].title).split()[4:])
 
-    # Creates the text field
+    # Create the text field
     text = Image.new("RGB", (128, 32))
     context = ImageDraw.Draw(text)
     context.text((0,0), top_row, fill=(0,200,0))
     context.text((0,10), middle_row, fill=(0,0,200))
     context.text((0,20), last_row, fill=(0,200,200))
 
-    # Combines the avatar image with the text field
+    # Combine the avatar image with the text field
     image = Image.new("RGB", (160, 32))
     image.paste(small_avatar, (0,0))
     image.paste(text, (40,0))
