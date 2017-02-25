@@ -22,6 +22,7 @@ from rgbmatrix import Adafruit_RGBmatrix
 from HTMLParser import HTMLParser
 import feedparser
 import logging
+import logging.handlers
 import os
 import sys
 
