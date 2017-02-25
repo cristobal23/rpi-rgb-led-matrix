@@ -35,6 +35,8 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
+logger.info('Starting application')
+
 if 'JIRA_USERNAME' not in os.environ:
     logger.error('JIRA_USERNAME is not defined')
     sys.exit(2)
@@ -54,6 +56,7 @@ def strip_tags(html):
     return s.get_data()
 
 def create_image():
+    logger.info('Creating new image')
     username = os.environ.get('JIRA_USERNAME')
     password = os.environ.get('JIRA_PASSWORD')
     d = feedparser.parse('https://' + username + ':' + password + '@whistle.atlassian.net/activity')
