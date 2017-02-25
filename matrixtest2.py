@@ -29,7 +29,7 @@ import sys
 # Create logger
 logger = logging.getLogger('led_matrix')
 logger.setLevel(logging.DEBUG)
-ch = logging.SysLogHandler()
+ch = logging.handlers.SysLogHandler(address='/var/log/syslog')
 ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
