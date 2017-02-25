@@ -21,25 +21,15 @@ from io import BytesIO
 from rgbmatrix import Adafruit_RGBmatrix
 from HTMLParser import HTMLParser
 import feedparser
-import logging
-import logging.handlers
+import syslog
 import os
 import sys
 
 
-# Create logger
-logger = logging.getLogger('led_matrix')
-logger.setLevel(logging.DEBUG)
-ch = logging.handlers.SysLogHandler(address = '/dev/log/')
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
-logger.info('Starting application')
+syslog.syslog('Starting application')
 
 if 'JIRA_USERNAME' not in os.environ:
-    logger.error('JIRA_USERNAME is not defined')
+    syslog.syslog(syslog.LOG_ERR, 'JIRA_USERNAME is not defined')
     sys.exit(2)
 
 class MLStripper(HTMLParser):
@@ -57,7 +47,7 @@ def strip_tags(html):
     return s.get_data()
 
 def create_image():
-    logger.info('Creating new image')
+    syslog.syslog('Creating new image')
     username = os.environ.get('JIRA_USERNAME')
     password = os.environ.get('JIRA_PASSWORD')
     d = feedparser.parse('https://' + username + ':' + password + '@whistle.atlassian.net/activity')
@@ -70,7 +60,7 @@ def create_image():
         small_avatar = Image.open("jira.png")
         small_avatar.load()
         msg = u'Tried to load an avatar from ' + avatar_url
-        logger.info(msg)
+        syslog.syslog(msg)
     else:
         r = requests.get(avatar_url, auth=(username, password))
         avatar = Image.open(BytesIO(r.content))
