@@ -21,11 +21,13 @@ from io import BytesIO
 from rgbmatrix import Adafruit_RGBmatrix
 from HTMLParser import HTMLParser
 import feedparser
+import logging
 import os
 import sys
 
 
 if 'JIRA_USERNAME' not in os.environ:
+    logging.error('JIRA_USERNAME is not defined')
     sys.exit(2)
 
 class MLStripper(HTMLParser):
@@ -54,6 +56,8 @@ def create_image():
     if avatar_string in avatar_url:
         small_avatar = Image.open("jira.png")
         small_avatar.load()
+        msg = u'Tried to load an avatar from ' + avatar_url
+        logging.info(msg)
     else:
         r = requests.get(avatar_url, auth=(username, password))
         avatar = Image.open(BytesIO(r.content))
