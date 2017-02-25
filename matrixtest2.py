@@ -26,8 +26,17 @@ import os
 import sys
 
 
+# Create logger
+logger = logging.getLogger('led_matrix')
+logger.setLevel(logging.DEBUG)
+ch = logging.SysLogHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
 if 'JIRA_USERNAME' not in os.environ:
-    logging.error('JIRA_USERNAME is not defined')
+    logger.error('JIRA_USERNAME is not defined')
     sys.exit(2)
 
 class MLStripper(HTMLParser):
@@ -57,7 +66,7 @@ def create_image():
         small_avatar = Image.open("jira.png")
         small_avatar.load()
         msg = u'Tried to load an avatar from ' + avatar_url
-        logging.info(msg)
+        logger.info(msg)
     else:
         r = requests.get(avatar_url, auth=(username, password))
         avatar = Image.open(BytesIO(r.content))
